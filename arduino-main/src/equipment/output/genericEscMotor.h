@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "output.h"
 #include "../../communication/communication.h"
-#include <Adafruit_PWMServoDriver.h>
+#include <Servo.h>
 
 /*
   The EscMotor class represents any motor controlled using PWM.
@@ -14,9 +14,7 @@ class EscMotor: public Output {
 
   protected:
     // Represents a motor controlled by an ESC
-    static Adafruit_PWMServoDriver motor;
-    static bool motorInstantiated;
-    static void instantiateMotor();
+    Servo motor;
 
   public:
 
