@@ -13,7 +13,6 @@
 /* ============================================================ */
 /* ======================Import libraries====================== */
 /* ============================================================ */
-#include <EEPROM.h> // Library for writing to Arduino's non volatile memory
 #include <Arduino_JSON.h> // JSON encoding and decoding
 
 // Custom ROV Libaries
@@ -22,6 +21,7 @@
 #include "./src/equipment/input/input.h"
 #include "./src/equipment/output/output.h"
 #include "./src/util/mapper.h"
+#include "./src/util/id.h"
 
 /* ============================================================ */
 /* ==================Set up global variables=================== */
@@ -41,7 +41,8 @@ Communication communication; // Object to allow for communication with the Raspb
 /* =======================Setup function======================= */
 /* =============Runs once when Arduino is turned on============ */
 void setup() {
-  arduinoID = "A_" + String(char(EEPROM.read(0)));
+  ID idGenerator = ID();
+  arduinoID = "A_" + idGenerator.getId();
 
   // initialize serial:
   Serial.begin(115200);
