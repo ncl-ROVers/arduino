@@ -2,8 +2,8 @@
 
 String arduinoID = "";  
 
-String A_O = "A_O";
-String A_I = "A_I";
+String A_A = "A_A";
+String A_B = "A_B";
 
 int safetyShutoffTimeMs = 1000; 
 
