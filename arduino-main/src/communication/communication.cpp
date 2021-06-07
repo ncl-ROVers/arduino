@@ -40,9 +40,6 @@ void Communication::sendStatus (int status){
 void Communication::sendAll(){
   // This is meant to send back data to the Pi
   // Disabled for 2021 as no sensor data is expected
-  // Calling sendStatus() as a temporary bodge
-
-  sendStatus();
 
   /*Serial.print("{\""+deviceIdKey+"\":\"");
   Serial.print(arduinoID);
