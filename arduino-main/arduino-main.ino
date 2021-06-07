@@ -29,6 +29,7 @@
 
 
 unsigned long lastMessage; // The timestamp of when the last message was received
+unsigned long lastHB; // The timestamp of when the last heartbeat was sent
 bool safetyActive = false; // Whether output devices are stopped because no data was received
 
 Mapper mapper; // Lightweight replacement for a map/dictionary structure to map JSON IDs to objects representing devices.
@@ -101,6 +102,12 @@ void loop() {
   else if(mapper.thisIsAnInputArduino()){
     // Output all sensor data
       mapper.sendAllSensors();
+  }
+
+  // Heartbeat if no message recieved in this time
+  if(millis() - lastMessage > 500 && millis() - lastHB > 500){ // 500ms timeout to trigger heartbeat to be sent
+    lastHB = millis();
+    communication.sendStatus(0);
   }
 
 }
