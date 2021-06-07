@@ -41,6 +41,9 @@ Communication communication; // Object to allow for communication with the Raspb
 /* =======================Setup function======================= */
 /* =============Runs once when Arduino is turned on============ */
 void setup() {
+  // Wait for serial connection before starting
+  while (!Serial);
+  
   ID idGenerator = ID();
   arduinoID = "A_" + idGenerator.getId();
 

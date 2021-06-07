@@ -6,6 +6,7 @@
 #include "../util/constants.h"
 
 #define ELEMENTCOUNT 20
+#define MSGPACK_DEBUGLOG_ENABLE // Enables debugging to the serial port
 
 /* ==========================Communication========================== */
 
