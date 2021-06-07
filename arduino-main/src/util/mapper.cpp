@@ -2,17 +2,17 @@
 
 void Mapper::mapA(){
 
-    aObjects[0] = new Thruster(0, aIDs[0]);
-    aObjects[1] = new Thruster(1, aIDs[1]);
-    aObjects[2] = new Thruster(2, aIDs[2]);
-    aObjects[3] = new Thruster(3, aIDs[3]);
+    aObjects[0] = new Thruster(2, aIDs[0]);
+    aObjects[1] = new Thruster(3, aIDs[1]);
+    aObjects[2] = new Thruster(4, aIDs[2]);
+    aObjects[3] = new Thruster(5, aIDs[3]);
 
     // Delays between each device so they initialise separately. This helps to give an auditory signal that everything is connected properly.
     delay(2000);
-    aObjects[4] = new Thruster(4, aIDs[4]);
+    aObjects[4] = new Thruster(6, aIDs[4]);
 
     delay(2000);
-    aObjects[5] = new ArmRotation(5, aIDs[5]); // Micro ROV return cord - TODO: Make new class for this
+    aObjects[5] = new ArmRotation(7, aIDs[5]); // Micro ROV return cord - TODO: Make new class for this
 
 }
 
