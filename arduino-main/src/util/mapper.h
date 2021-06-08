@@ -1,5 +1,5 @@
-#define A_COUNT 6 // Number of devices attached to Arduino A
-#define B_COUNT 5 // Number of devices attached to Arduino B
+#define A_COUNT 8 // Number of devices attached to Arduino A
+#define B_COUNT 3 // Number of devices attached to Arduino B
 
 #ifndef MAPPER_H
 #define MAPPER_H
@@ -23,11 +23,14 @@ class Mapper {
 
     // Enclosure 1
     Output* aObjects[A_COUNT];
-    String aIDs[A_COUNT] = {"T_HFP", "T_HFS", "T_HAP", "T_HAS", "T_M", "M_R"};
+    String aIDs[A_COUNT] = {
+      "T_VFP", "T_VFS", "T_VAP", "T_VAS",
+      "T_HFP", "T_HFS", "T_HAP", "T_HAS"
+      };
 
     // Enclosure 2
     Output* bObjects[B_COUNT];
-    String bIDs[B_COUNT] = {"T_VFP", "T_VFS", "T_VAP", "T_VAS", "M_G"};
+    String bIDs[B_COUNT] = {"M_G", "M_C", "T_M"};
 
     /*
       Assign JSON IDs to devices on this Arduino
