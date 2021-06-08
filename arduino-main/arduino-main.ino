@@ -13,7 +13,7 @@
 /* ============================================================ */
 /* ======================Import libraries====================== */
 /* ============================================================ */
-#include <Arduino_JSON.h> // JSON encoding and decoding
+#include <ArduinoJson.h> // JSON encoding and decoding
 #include <MsgPack.h> // Msgpack packing and unpacking
 
 // Custom ROV Libaries
@@ -69,15 +69,38 @@ void loop() {
   // parse the string when a newline arrives:
   if (communication.stringIsComplete()) {
 
+
+
+
+    // TODO replace this
     // Set up JSON parser
-    JSONVar root = JSON.parse(communication.getInputString());
+    /*JSONVar root = JSON.parse(communication.getInputString());
 
     // Test if parsing succeeds.
     if (JSON.typeof(root) == "undefined") {
       communication.sendStatus(JSON_PARSING_FAILED);
       communication.prepareForNewMessage();
       return;
+    }*/
+
+    StaticJsonDocument<200> root;
+    DeserializationError err = deserializeJson(root, communication.getInputString());
+
+    // Test if parsing succeeds.
+    if (err) {
+      communication.sendStatus(JSON_PARSING_FAILED);
+      communication.prepareForNewMessage();
+      return;
     }
+
+
+
+
+
+
+
+
+
     safetyActive = false; // Switch off auto-off because valid message received
 
     // Act on incoming message accordingly
@@ -120,39 +143,25 @@ void loop() {
 
 }
 
-/* If no valid message has been received within a sensible amount of time, switch all devices off for safety */
-void disableOutputsIfNoMessageReceived(int timeInMs){
-  if(timeSinceLastMessageExceeds(timeInMs) && !safetyActive){ // 1 second limit
-    mapper.stopOutputs();
-    safetyActive = true; //activate safety
-    communication.sendStatus(NO_MESSAGES_RECEIVED_OUTPUTS_HALTED);
-    communication.sendAll();
-  }
-}
-
-/* Check if it's been a certain amount of time since the last valid message was received */
-bool timeSinceLastMessageExceeds(int timeInMs){
-  return millis() - lastMessage > timeInMs;
-}
-
-/* Update time last valid message received */
-void updateMostRecentMessageTime(){
-  lastMessage = millis();
-}
-
 /* Handle each control value from the incoming JSON message */
-void handleOutputCommands(JSONVar root){
-  for(int i = 0; i < mapper.getNumberOfOutputs(); i++){
+void handleOutputCommands(StaticJsonDocument<200> doc){
+  // TODO replace this
+  /*for(int i = 0; i < mapper.getNumberOfOutputs(); i++){
     if (root.hasOwnProperty(mapper.getOutputString(i))){
       mapper.getOutputFromIndex(i)->setValue(root[mapper.getOutputString(i)]);
     }
+  }*/
+
+  JsonObject obj = doc.as<JsonObject>();
+  for (JsonPair p : obj) {
+    mapper.getOutputFromString(p.key().c_str())->setValue(p.value().as<int>());
   }
-  
 
 }
 
 /* Handle each control value from the incoming JSON message (Ard_I Only) */
-void handleSensorCommands(JSONVar root){
+void handleSensorCommands(StaticJsonDocument<200> root){
+  // TODO replace this?
   /*
   for(int i = 0; i < root.length(); i++){
     JSONVar current = root[i];
@@ -171,4 +180,24 @@ void handleSensorCommands(JSONVar root){
     }
   }
   */
+}
+
+/* If no valid message has been received within a sensible amount of time, switch all devices off for safety */
+void disableOutputsIfNoMessageReceived(int timeInMs){
+  if(timeSinceLastMessageExceeds(timeInMs) && !safetyActive){ // 1 second limit
+    mapper.stopOutputs();
+    safetyActive = true; //activate safety
+    communication.sendStatus(NO_MESSAGES_RECEIVED_OUTPUTS_HALTED);
+    communication.sendAll();
+  }
+}
+
+/* Check if it's been a certain amount of time since the last valid message was received */
+bool timeSinceLastMessageExceeds(int timeInMs){
+  return millis() - lastMessage > timeInMs;
+}
+
+/* Update time last valid message received */
+void updateMostRecentMessageTime(){
+  lastMessage = millis();
 }
