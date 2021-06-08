@@ -2,31 +2,27 @@
 
 void Mapper::mapA(){
 
-    aObjects[0] = new Thruster(2, aIDs[0]);
-    aObjects[1] = new Thruster(3, aIDs[1]);
-    aObjects[2] = new Thruster(4, aIDs[2]);
-    aObjects[3] = new Thruster(5, aIDs[3]);
-
-    // Delays between each device so they initialise separately. This helps to give an auditory signal that everything is connected properly.
-    delay(2000);
-    aObjects[4] = new Thruster(6, aIDs[4]);
-
-    delay(2000);
-    aObjects[5] = new ArmRotation(7, aIDs[5]); // Micro ROV return cord - TODO: Make new class for this
+    int numberOfThrusters = 8;
+    for ( int i = 0; i < numberOfThrusters; i++) {
+        aObjects[i] = new Thruster(i + 2, aIDs[i]); // The 8 movement Thrusters
+    }
 
 }
 
 void Mapper::mapB(){
-    
-    bObjects[0] = new Thruster(0, bIDs[0]);
-    bObjects[1] = new Thruster(1, bIDs[1]);
-    bObjects[2] = new Thruster(2, bIDs[2]);
-    bObjects[3] = new Thruster(3, bIDs[3]);
+
+    bObjects[4] = new ArmGripper(2, bIDs[4], 54, 55); // Gripper motor for the arm
+    // TODO adjust limit switch pins
 
     // Delays between each device so they initialise separately. This helps to give an auditory signal that everything is connected properly.
     delay(2000);
-    bObjects[4] = new ArmGripper(4, bIDs[4], 54, 55); // Gripper motor for the arm
-    // TODO adjust limit switch pins
+    
+    aObjects[5] = new ArmRotation(3, aIDs[5]); // Micro ROV return cord - TODO: Make new class for this
+
+    delay(2000);
+
+    aObjects[4] = new Thruster(4, aIDs[4]);
+
 }
 
 void Mapper::instantiateMap(){
