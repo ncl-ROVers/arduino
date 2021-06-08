@@ -27,7 +27,7 @@ int ArmGripper::setValue(int inputValue) {//                                    
 
 bool ArmGripper::hitLeftLimit(){ // check if a limit switch was hit
   if(digitalRead(leftLimit)==LOW && currentValue<stoppedValue){ // Low = pressed
-    communication.sendStatus(2);
+    communication.sendStatus(ARM_LEFT_LIMIT_ACTIVATED);
     setValue(stoppedValue);
     return true;
   }
@@ -36,7 +36,7 @@ bool ArmGripper::hitLeftLimit(){ // check if a limit switch was hit
 
 bool ArmGripper::hitRightLimit(){ // check if a limit switch was hit
   if(digitalRead(rightLimit)==LOW && currentValue>stoppedValue){ // Low = pressed
-    communication.sendStatus(3);
+    communication.sendStatus(ARM_RIGHT_LIMIT_ACTIVATED);
     setValue(stoppedValue);
     return true;
   }

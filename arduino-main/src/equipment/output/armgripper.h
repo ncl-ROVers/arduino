@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "output.h"
+#include "../../util/status.h"
 #include "../../communication/communication.h"
 #include "genericEscMotor.h"
 

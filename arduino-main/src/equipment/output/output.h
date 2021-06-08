@@ -1,6 +1,7 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 #include "../../communication/communication.h"
+#include "../../util/status.h"
 #include <Arduino.h>
 
 /*

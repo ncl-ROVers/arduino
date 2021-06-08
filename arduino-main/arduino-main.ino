@@ -17,6 +17,7 @@
 #include <MsgPack.h> // Msgpack packing and unpacking
 
 // Custom ROV Libaries
+#include "./src/util/status.h"
 #include "./src/communication/communication.h"
 #include "./src/util/constants.h"
 #include "./src/equipment/input/input.h"
@@ -51,13 +52,13 @@ void setup() {
 
   // initialize serial:
   Serial.begin(115200);
-  communication.sendStatus(4);
+  communication.sendStatus(ARDUINO_BOOTING);
   
   // Map inputs and outputs based on which Arduino this is
   mapper.instantiateMap();
 
   communication.sendAll();
-  communication.sendStatus(0);
+  communication.sendStatus(NO_ERROR);
 
 }
 
@@ -73,7 +74,7 @@ void loop() {
 
     // Test if parsing succeeds.
     if (JSON.typeof(root) == "undefined") {
-      communication.sendStatus(-11);
+      communication.sendStatus(JSON_PARSING_FAILED);
       communication.prepareForNewMessage();
       return;
     }
@@ -87,7 +88,7 @@ void loop() {
       handleSensorCommands(root);
     }
     else{
-      communication.sendStatus(-12);
+      communication.sendStatus(ARDUINO_ID_NOT_SET_UP);
     }
     communication.prepareForNewMessage();
 
@@ -109,7 +110,7 @@ void loop() {
   // Heartbeat if no message recieved in this time
   if(millis() - lastMessage > heartbeatTimeMs && millis() - lastHB > heartbeatTimeMs){ //timeout to trigger heartbeat to be sent
     lastHB = millis();
-    communication.sendStatus(0);
+    communication.sendStatus(HEARTBEAT);
   }
 
   // Call this method to process incoming serial data.
@@ -124,7 +125,7 @@ void disableOutputsIfNoMessageReceived(int timeInMs){
   if(timeSinceLastMessageExceeds(timeInMs) && !safetyActive){ // 1 second limit
     mapper.stopOutputs();
     safetyActive = true; //activate safety
-    communication.sendStatus(-13);
+    communication.sendStatus(NO_MESSAGES_RECEIVED_OUTPUTS_HALTED);
     communication.sendAll();
   }
 }
@@ -166,7 +167,7 @@ void handleSensorCommands(JSONVar root){
     }
 
     if(setValue == current.value) {
-      communication.sendStatus(0);
+      communication.sendStatus(NO_ERROR);
     }
   }
   */
