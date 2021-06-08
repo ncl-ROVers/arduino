@@ -105,10 +105,14 @@ void loop() {
   }
 
   // Heartbeat if no message recieved in this time
-  if(millis() - lastMessage > 500 && millis() - lastHB > 500){ // 500ms timeout to trigger heartbeat to be sent
+  if(millis() - lastMessage > heartbeatTimeMs && millis() - lastHB > heartbeatTimeMs){ //timeout to trigger heartbeat to be sent
     lastHB = millis();
     communication.sendStatus(0);
   }
+
+  // Call this method to process incoming serial data.
+  // On Arduino Mega this is called by default each loop, but on Arduino Nano 33 you have to call it manually.
+  serialEvent();
 
 }
 
@@ -171,4 +175,22 @@ void prepareForNewMessage(){
   // clear the string ready for the next input
   communication.setInputString("");
   communication.setStringComplete(false);
+}
+
+/*
+  SerialEvent occurs whenever a new data comes in the hardware serial RX. This
+  routine is run between each time loop() runs, so using delay inside loop can
+  delay response. Multiple bytes of data may be available.
+*/
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+    if (inChar == '\n' || inChar == '\r') {
+      communication.setStringComplete(true);
+      break;
+    }
+    communication.setInputString(communication.getInputString() + inChar);
+  }
 }
