@@ -2,8 +2,8 @@
 
 ArmGripper::ArmGripper(int inputPin, String partID, int limitPinLeft, int limitPinRight ) : EscMotor(inputPin, partID) {
   // Set limit and starting values
-  maxValue = 1900;
-  minValue = 1100;
+  maxValue = 1600;
+  minValue = 1400;
   stoppedValue=1500;
   currentValue = stoppedValue;
 
