@@ -46,6 +46,15 @@ char* Communication::getInputString(){
   return receivedChars;
 }
 
+/* Send response, clear the input buffer and wait for new incoming message */
+void Communication::prepareForNewMessage(){
+  // Finish by sending all the values
+  sendAll();
+  // clear the string ready for the next input
+  clearInputString();
+  setStringComplete(false);
+}
+
 void Communication::bufferValue(String device, String incomingValue){
   // buffer a key value pair to be sent with next load
   messageContents+=",\""+device;

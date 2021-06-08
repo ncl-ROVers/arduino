@@ -56,6 +56,11 @@ class Communication{
     char* getInputString();
 
     /*
+      Clear input string etc in anticipation of new incoming message
+    */
+    void prepareForNewMessage();
+
+    /*
       Buffer a key:value pair to be sent to the Pi
     */
     void bufferValue(String device, String incomingValue);

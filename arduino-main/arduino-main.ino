@@ -74,7 +74,7 @@ void loop() {
     // Test if parsing succeeds.
     if (JSON.typeof(root) == "undefined") {
       communication.sendStatus(-11);
-      prepareForNewMessage();
+      communication.prepareForNewMessage();
       return;
     }
     safetyActive = false; // Switch off auto-off because valid message received
@@ -89,7 +89,7 @@ void loop() {
     else{
       communication.sendStatus(-12);
     }
-    prepareForNewMessage();
+    communication.prepareForNewMessage();
 
     updateMostRecentMessageTime();
 
@@ -171,13 +171,3 @@ void handleSensorCommands(JSONVar root){
   }
   */
 }
-
-/* Send response, clear the input buffer and wait for new incoming message */
-void prepareForNewMessage(){
-  // Finish by sending all the values
-  communication.sendAll();
-  // clear the string ready for the next input
-  communication.clearInputString();
-  communication.setStringComplete(false);
-}
-
