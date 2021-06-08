@@ -69,22 +69,8 @@ void loop() {
   // parse the string when a newline arrives:
   if (communication.stringIsComplete()) {
 
-
-
-
-    // TODO replace this
-    // Set up JSON parser
-    /*JSONVar root = JSON.parse(communication.getInputString());
-
-    // Test if parsing succeeds.
-    if (JSON.typeof(root) == "undefined") {
-      communication.sendStatus(JSON_PARSING_FAILED);
-      communication.prepareForNewMessage();
-      return;
-    }*/
-
     StaticJsonDocument<200> root;
-    DeserializationError err = deserializeJson(root, communication.getInputString());
+    DeserializationError err = deserializeMsgPack(root, communication.getInputString());
 
     // Test if parsing succeeds.
     if (err) {
@@ -92,14 +78,6 @@ void loop() {
       communication.prepareForNewMessage();
       return;
     }
-
-
-
-
-
-
-
-
 
     safetyActive = false; // Switch off auto-off because valid message received
 
@@ -145,12 +123,6 @@ void loop() {
 
 /* Handle each control value from the incoming JSON message */
 void handleOutputCommands(StaticJsonDocument<200> doc){
-  // TODO replace this
-  /*for(int i = 0; i < mapper.getNumberOfOutputs(); i++){
-    if (root.hasOwnProperty(mapper.getOutputString(i))){
-      mapper.getOutputFromIndex(i)->setValue(root[mapper.getOutputString(i)]);
-    }
-  }*/
 
   JsonObject obj = doc.as<JsonObject>();
   for (JsonPair p : obj) {
