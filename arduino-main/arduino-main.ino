@@ -118,7 +118,8 @@ void loop() {
 
 /* If no valid message has been received within a sensible amount of time, switch all devices off for safety */
 void disableOutputsIfNoMessageReceived(int timeInMs){
-  if(TimeSinceLastMessageExceeds(timeInMs) && !safetyActive){ // 1 second limit
+  if(timeSinceLastMessageExceeds(timeInMs) && !safetyActive){ // 1 second limit
+    mapper.stopOutputs();
     safetyActive = true; //activate safety
     communication.sendStatus(-13);
     communication.sendAll();
@@ -126,7 +127,7 @@ void disableOutputsIfNoMessageReceived(int timeInMs){
 }
 
 /* Check if it's been a certain amount of time since the last valid message was received */
-bool TimeSinceLastMessageExceeds(int timeInMs){
+bool timeSinceLastMessageExceeds(int timeInMs){
   return millis() - lastMessage > timeInMs;
 }
 
