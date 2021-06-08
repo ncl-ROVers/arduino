@@ -19,7 +19,9 @@ class Communication{
     String key[ELEMENTCOUNT];
     String value[ELEMENTCOUNT];
     bool stringComplete = false;  // whether a full JSON string has been received
-    String inputString = "";         // a String to hold incoming data
+    //String inputString = "";         // a String to hold incoming data
+    static const byte numChars = 200; // Only expecting 200 input chars
+    char receivedChars[numChars];   // an array to store the received data
     String statusKey = "S_";
     String deviceIdKey = "ID";
     String messageContents = "";
@@ -39,13 +41,19 @@ class Communication{
 
     /*
       The latest JSON string read from the serial port
+      Source: https://forum.arduino.cc/t/serial-input-basics-updated/382007
     */
-    void setInputString(String inputStr);
+    void recvWithEndMarker();
+
+    /*
+      Clear input string ready to receive new one
+    */
+    void clearInputString();
 
     /*
       The latest JSON string read from the serial port
     */
-    String getInputString();
+    char* getInputString();
 
     /*
       Buffer a key:value pair to be sent to the Pi

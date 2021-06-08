@@ -14,6 +14,7 @@
 /* ======================Import libraries====================== */
 /* ============================================================ */
 #include <Arduino_JSON.h> // JSON encoding and decoding
+#include <MsgPack.h> // Msgpack packing and unpacking
 
 // Custom ROV Libaries
 #include "./src/communication/communication.h"
@@ -69,6 +70,7 @@ void loop() {
 
     // Set up JSON parser
     JSONVar root = JSON.parse(communication.getInputString());
+
     // Test if parsing succeeds.
     if (JSON.typeof(root) == "undefined") {
       communication.sendStatus(-11);
@@ -112,7 +114,8 @@ void loop() {
 
   // Call this method to process incoming serial data.
   // On Arduino Mega this is called by default each loop, but on Arduino Nano 33 you have to call it manually.
-  serialEvent();
+  //serialEvent();
+  communication.recvWithEndMarker();
 
 }
 
@@ -174,24 +177,7 @@ void prepareForNewMessage(){
   // Finish by sending all the values
   communication.sendAll();
   // clear the string ready for the next input
-  communication.setInputString("");
+  communication.clearInputString();
   communication.setStringComplete(false);
 }
 
-/*
-  SerialEvent occurs whenever a new data comes in the hardware serial RX. This
-  routine is run between each time loop() runs, so using delay inside loop can
-  delay response. Multiple bytes of data may be available.
-*/
-void serialEvent() {
-  while (Serial.available()) {
-    // get the new byte:
-    char inChar = (char)Serial.read();
-    // add it to the inputString:
-    if (inChar == '\n' || inChar == '\r') {
-      communication.setStringComplete(true);
-      break;
-    }
-    communication.setInputString(communication.getInputString() + inChar);
-  }
-}

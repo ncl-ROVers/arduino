@@ -4,7 +4,7 @@
 
 Communication::Communication(){
   // reserve 200 bytes for the inputString:
-  inputString.reserve(200);
+  //inputString.reserve(200);
 }
 
 void Communication::setStringComplete(bool complete){
@@ -15,12 +15,35 @@ bool Communication::stringIsComplete(){
   return stringComplete;
 }
 
-void Communication::setInputString(String inputStr){
-  inputString = inputStr;
+void Communication::recvWithEndMarker() {
+    static byte ndx = 0;
+    char endMarker = '\n';
+    char rc;
+    
+    while (Serial.available() > 0 && stringComplete == false) {
+        rc = Serial.read();
+
+        if (rc != endMarker) {
+            receivedChars[ndx] = rc;
+            ndx++;
+            if (ndx >= numChars) {
+                ndx = numChars - 1;
+            }
+        }
+        else {
+            receivedChars[ndx] = '\0'; // terminate the string
+            ndx = 0;
+            stringComplete = true;
+        }
+    }
 }
 
-String Communication::getInputString(){
-  return inputString;
+void Communication::clearInputString(){
+  receivedChars[0] = '\0';
+}
+
+char* Communication::getInputString(){
+  return receivedChars;
 }
 
 void Communication::bufferValue(String device, String incomingValue){
