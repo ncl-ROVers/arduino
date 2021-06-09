@@ -1,7 +1,5 @@
 #include "communication.h"
 
-#include <MsgPack.h>
-
 Communication::Communication(){
   // reserve 200 bytes for the inputString:
   //inputString.reserve(200);
@@ -63,10 +61,14 @@ void Communication::bufferValue(String device, String incomingValue){
 }
 
 void Communication::sendStatus (int status){
-  MsgPack::Packer p;
+  /*MsgPack::Packer p;
   p.to_map(deviceIdKey, arduinoID, statusKey, status);
 
-  Serial.write(p.data(), p.size());
+  Serial.write(p.data(), p.size());*/
+  StaticJsonDocument<200> doc;
+  doc[deviceIdKey] = arduinoID;
+  doc[statusKey] = status;
+  serializeJson(doc, Serial);
 }
 
 void Communication::sendAll(){
