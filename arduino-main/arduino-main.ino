@@ -24,6 +24,7 @@
 #include "./src/equipment/output/output.h"
 #include "./src/util/mapper.h"
 #include "./src/util/id.h"
+#include "./src/util/led.h"
 
 /* ============================================================ */
 /* ==================Set up global variables=================== */
@@ -38,14 +39,17 @@ Mapper mapper; // Lightweight replacement for a map/dictionary structure to map 
 
 Communication communication; // Object to allow for communication with the Raspberry Pi over UART
 
-
+LED led; // Object to allow for communication with the Raspberry Pi over UART
 
 /* ============================================================ */
 /* =======================Setup function======================= */
 /* =============Runs once when Arduino is turned on============ */
 void setup() {
+  led.red();
+  
   // Wait for serial connection before starting
   while (!Serial);
+  led.yellow();
   
   ID idGenerator = ID();
   arduinoID = "A_" + idGenerator.getId();
@@ -59,7 +63,7 @@ void setup() {
 
   communication.sendAll();
   communication.sendStatus(NO_ERROR);
-
+  led.green();
 }
 
 /* ============================================================ */
@@ -68,10 +72,9 @@ void setup() {
 void loop() {
   // parse the string when a newline arrives:
   if (communication.stringIsComplete()) {
-
+    led.purple();
     StaticJsonDocument<200> root;
     DeserializationError err = deserializeMsgPack(root, communication.getInputString());
-
     // Test if parsing succeeds.
     if (err) {
       communication.sendStatus(JSON_PARSING_FAILED);
@@ -94,7 +97,7 @@ void loop() {
     communication.prepareForNewMessage();
 
     updateMostRecentMessageTime();
-
+    led.green();
   }
 
   // Code to run all the time goes here:
@@ -112,6 +115,7 @@ void loop() {
   if(millis() - lastMessage > heartbeatTimeMs && millis() - lastHB > heartbeatTimeMs){ //timeout to trigger heartbeat to be sent
     lastHB = millis();
     communication.sendStatus(HEARTBEAT);
+    led.yellow();
   }
 
   // Call this method to process incoming serial data.
@@ -157,6 +161,7 @@ void handleSensorCommands(StaticJsonDocument<200> root){
 /* If no valid message has been received within a sensible amount of time, switch all devices off for safety */
 void disableOutputsIfNoMessageReceived(int timeInMs){
   if(timeSinceLastMessageExceeds(timeInMs) && !safetyActive){ // 1 second limit
+    led.red();
     mapper.stopOutputs();
     safetyActive = true; //activate safety
     communication.sendStatus(NO_MESSAGES_RECEIVED_OUTPUTS_HALTED);
