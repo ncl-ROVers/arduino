@@ -24,7 +24,7 @@ class Communication{
     //String inputString = "";         // a String to hold incoming data
     static const byte numChars = 200; // Only expecting 200 input chars
     char receivedChars[numChars];   // an array to store the received data
-    String statusKey = "S";
+    String statusKey = "S_";
     String deviceIdKey = "ID";
     String messageContents = "";
 

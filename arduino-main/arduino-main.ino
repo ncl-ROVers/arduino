@@ -70,7 +70,7 @@ void loop() {
   if (communication.stringIsComplete()) {
 
     StaticJsonDocument<200> root;
-    DeserializationError err = deserializeJson(root, communication.getInputString());
+    DeserializationError err = deserializeMsgPack(root, communication.getInputString());
 
     // Test if parsing succeeds.
     if (err) {

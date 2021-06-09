@@ -3,6 +3,8 @@
 Communication::Communication(){
   // reserve 200 bytes for the inputString:
   //inputString.reserve(200);
+  ID idGenerator = ID();
+  statusKey = statusKey + idGenerator.getId();
 }
 
 void Communication::setStringComplete(bool complete){
@@ -68,7 +70,8 @@ void Communication::sendStatus (int status){
   StaticJsonDocument<200> doc;
   doc[deviceIdKey] = arduinoID;
   doc[statusKey] = status;
-  serializeJson(doc, Serial);
+  serializeMsgPack(doc, Serial);
+  Serial.println();
 }
 
 void Communication::sendAll(){
