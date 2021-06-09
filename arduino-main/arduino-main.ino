@@ -115,7 +115,10 @@ void loop() {
   if(millis() - lastMessage > heartbeatTimeMs && millis() - lastHB > heartbeatTimeMs){ //timeout to trigger heartbeat to be sent
     lastHB = millis();
     communication.sendStatus(HEARTBEAT);
-    led.yellow();
+    if(!safetyActive){
+      led.yellow();
+    }
+    
   }
 
   // Call this method to process incoming serial data.
