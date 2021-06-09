@@ -47,6 +47,8 @@ LED led; // Object to allow for communication with the Raspberry Pi over UART
 void setup() {
   led.red();
   
+  // Wait for serial connection before starting
+  while (!Serial);
   led.yellow();
   
   ID idGenerator = ID();
@@ -59,13 +61,9 @@ void setup() {
   // Map inputs and outputs based on which Arduino this is
   mapper.instantiateMap();
 
-  // Wait for serial connection before starting
-  while (!Serial);
-  led.green();
-  
   communication.sendAll();
   communication.sendStatus(NO_ERROR);
-
+  led.green();
 }
 
 /* ============================================================ */
