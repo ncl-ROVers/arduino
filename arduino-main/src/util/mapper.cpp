@@ -11,17 +11,17 @@ void Mapper::mapA(){
 
 void Mapper::mapB(){
 
-    bObjects[4] = new ArmGripper(2, bIDs[4], 54, 55); // Gripper motor for the arm
+    bObjects[4] = new ArmGripper(2, bIDs[0], 54, 55); // Gripper motor for the arm
     // TODO adjust limit switch pins
 
     // Delays between each device so they initialise separately. This helps to give an auditory signal that everything is connected properly.
     delay(2000);
     
-    aObjects[5] = new ArmRotation(3, aIDs[5]); // Micro ROV return cord - TODO: Make new class for this
+    aObjects[5] = new ArmRotation(3, aIDs[1]); // Micro ROV return cord - TODO: Make new class for this
 
     delay(2000);
 
-    aObjects[4] = new Thruster(4, aIDs[4]);
+    aObjects[4] = new Thruster(4, aIDs[2]);
 
 }
 
