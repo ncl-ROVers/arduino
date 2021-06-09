@@ -76,13 +76,12 @@ void Communication::sendStatus (int status){
 
 void Communication::sendAll(){
   // This is meant to send back data to the Pi
-  // Disabled for 2021 as no sensor data is expected
 
-  /*Serial.print("{\""+deviceIdKey+"\":\"");
-  Serial.print(arduinoID);
-  Serial.print("\"");
-  Serial.print(messageContents);
-  Serial.println("}");
-  messageContents="";*/
+  // TODO actually send back buffered data
+
+  StaticJsonDocument<200> doc;
+  doc[deviceIdKey] = arduinoID;
+  serializeMsgPack(doc, Serial);
+  Serial.println();
 }
 
