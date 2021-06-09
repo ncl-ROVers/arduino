@@ -1,10 +1,10 @@
 #include "communication.h"
 
-#include <MsgPack.h>
-
 Communication::Communication(){
   // reserve 200 bytes for the inputString:
-  inputString.reserve(200);
+  //inputString.reserve(200);
+  ID idGenerator = ID();
+  statusKey = statusKey + idGenerator.getId();
 }
 
 void Communication::setStringComplete(bool complete){
@@ -15,12 +15,44 @@ bool Communication::stringIsComplete(){
   return stringComplete;
 }
 
-void Communication::setInputString(String inputStr){
-  inputString = inputStr;
+void Communication::recvWithEndMarker() {
+    static byte ndx = 0;
+    char endMarker = '\n';
+    char rc;
+    
+    while (Serial.available() > 0 && stringComplete == false) {
+        rc = Serial.read();
+
+        if (rc != endMarker) {
+            receivedChars[ndx] = rc;
+            ndx++;
+            if (ndx >= numChars) {
+                ndx = numChars - 1;
+            }
+        }
+        else {
+            receivedChars[ndx] = '\0'; // terminate the string
+            ndx = 0;
+            stringComplete = true;
+        }
+    }
 }
 
-String Communication::getInputString(){
-  return inputString;
+void Communication::clearInputString(){
+  receivedChars[0] = '\0';
+}
+
+char* Communication::getInputString(){
+  return receivedChars;
+}
+
+/* Send response, clear the input buffer and wait for new incoming message */
+void Communication::prepareForNewMessage(){
+  // Finish by sending all the values
+  sendAll();
+  // clear the string ready for the next input
+  clearInputString();
+  setStringComplete(false);
 }
 
 void Communication::bufferValue(String device, String incomingValue){
@@ -31,36 +63,26 @@ void Communication::bufferValue(String device, String incomingValue){
 }
 
 void Communication::sendStatus (int status){
-  MsgPack::Packer p;
+  /*MsgPack::Packer p;
   p.to_map(deviceIdKey, arduinoID, statusKey, status);
 
-  Serial.write(p.data(), p.size());
+  Serial.write(p.data(), p.size());*/
+  StaticJsonDocument<200> doc;
+  doc[deviceIdKey] = arduinoID;
+  doc[statusKey] = status;
+  serializeMsgPack(doc, Serial);
+  Serial.println();
 }
 
 void Communication::sendAll(){
-  Serial.print("{\""+deviceIdKey+"\":\"");
+  // This is meant to send back data to the Pi
+  // Disabled for 2021 as no sensor data is expected
+
+  /*Serial.print("{\""+deviceIdKey+"\":\"");
   Serial.print(arduinoID);
   Serial.print("\"");
   Serial.print(messageContents);
   Serial.println("}");
-  messageContents="";
+  messageContents="";*/
 }
 
-
-/*
-  SerialEvent occurs whenever a new data comes in the hardware serial RX. This
-  routine is run between each time loop() runs, so using delay inside loop can
-  delay response. Multiple bytes of data may be available.
-*/
-void serialEvent() {
-  while (Serial.available()) {
-    // get the new byte:
-    char inChar = (char)Serial.read();
-    // add it to the inputString:
-    if (inChar == '\n' || inChar == '\r') {
-      communication.setStringComplete(true);
-      break;
-    }
-    communication.setInputString(communication.getInputString() + inChar);
-  }
-}

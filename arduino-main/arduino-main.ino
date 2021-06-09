@@ -13,9 +13,11 @@
 /* ============================================================ */
 /* ======================Import libraries====================== */
 /* ============================================================ */
-#include <Arduino_JSON.h> // JSON encoding and decoding
+#include <ArduinoJson.h> // JSON encoding and decoding
+#include <MsgPack.h> // Msgpack packing and unpacking
 
 // Custom ROV Libaries
+#include "./src/util/status.h"
 #include "./src/communication/communication.h"
 #include "./src/util/constants.h"
 #include "./src/equipment/input/input.h"
@@ -29,6 +31,7 @@
 
 
 unsigned long lastMessage; // The timestamp of when the last message was received
+unsigned long lastHB; // The timestamp of when the last heartbeat was sent
 bool safetyActive = false; // Whether output devices are stopped because no data was received
 
 Mapper mapper; // Lightweight replacement for a map/dictionary structure to map JSON IDs to objects representing devices.
@@ -41,18 +44,21 @@ Communication communication; // Object to allow for communication with the Raspb
 /* =======================Setup function======================= */
 /* =============Runs once when Arduino is turned on============ */
 void setup() {
+  // Wait for serial connection before starting
+  while (!Serial);
+  
   ID idGenerator = ID();
   arduinoID = "A_" + idGenerator.getId();
 
   // initialize serial:
   Serial.begin(115200);
-  communication.sendStatus(4);
+  communication.sendStatus(ARDUINO_BOOTING);
   
   // Map inputs and outputs based on which Arduino this is
   mapper.instantiateMap();
 
   communication.sendAll();
-  communication.sendStatus(0);
+  communication.sendStatus(NO_ERROR);
 
 }
 
@@ -63,14 +69,16 @@ void loop() {
   // parse the string when a newline arrives:
   if (communication.stringIsComplete()) {
 
-    // Set up JSON parser
-    JSONVar root = JSON.parse(communication.getInputString());
+    StaticJsonDocument<200> root;
+    DeserializationError err = deserializeMsgPack(root, communication.getInputString());
+
     // Test if parsing succeeds.
-    if (JSON.typeof(root) == "undefined") {
-      communication.sendStatus(-11);
-      prepareForNewMessage();
+    if (err) {
+      communication.sendStatus(JSON_PARSING_FAILED);
+      communication.prepareForNewMessage();
       return;
     }
+
     safetyActive = false; // Switch off auto-off because valid message received
 
     // Act on incoming message accordingly
@@ -81,9 +89,9 @@ void loop() {
       handleSensorCommands(root);
     }
     else{
-      communication.sendStatus(-12);
+      communication.sendStatus(ARDUINO_ID_NOT_SET_UP);
     }
-    prepareForNewMessage();
+    communication.prepareForNewMessage();
 
     updateMostRecentMessageTime();
 
@@ -100,40 +108,32 @@ void loop() {
       mapper.sendAllSensors();
   }
 
-}
-
-/* If no valid message has been received within a sensible amount of time, switch all devices off for safety */
-void disableOutputsIfNoMessageReceived(int timeInMs){
-  if(TimeSinceLastMessageExceeds(timeInMs) && !safetyActive){ // 1 second limit
-    safetyActive = true; //activate safety
-    communication.sendStatus(-13);
-    communication.sendAll();
+  // Heartbeat if no message recieved in this time
+  if(millis() - lastMessage > heartbeatTimeMs && millis() - lastHB > heartbeatTimeMs){ //timeout to trigger heartbeat to be sent
+    lastHB = millis();
+    communication.sendStatus(HEARTBEAT);
   }
-}
 
-/* Check if it's been a certain amount of time since the last valid message was received */
-bool TimeSinceLastMessageExceeds(int timeInMs){
-  return millis() - lastMessage > timeInMs;
-}
+  // Call this method to process incoming serial data.
+  // On Arduino Mega this is called by default each loop, but on Arduino Nano 33 you have to call it manually.
+  //serialEvent();
+  communication.recvWithEndMarker();
 
-/* Update time last valid message received */
-void updateMostRecentMessageTime(){
-  lastMessage = millis();
 }
 
 /* Handle each control value from the incoming JSON message */
-void handleOutputCommands(JSONVar root){
-  for(int i = 0; i < mapper.getNumberOfOutputs(); i++){
-    if (root.hasOwnProperty(mapper.getOutputString(i))){
-      mapper.getOutputFromIndex(i)->setValue(root[mapper.getOutputString(i)]);
-    }
+void handleOutputCommands(StaticJsonDocument<200> doc){
+
+  JsonObject obj = doc.as<JsonObject>();
+  for (JsonPair p : obj) {
+    mapper.getOutputFromString(p.key().c_str())->setValue(p.value().as<int>());
   }
-  
 
 }
 
 /* Handle each control value from the incoming JSON message (Ard_I Only) */
-void handleSensorCommands(JSONVar root){
+void handleSensorCommands(StaticJsonDocument<200> root){
+  // TODO replace this?
   /*
   for(int i = 0; i < root.length(); i++){
     JSONVar current = root[i];
@@ -148,17 +148,28 @@ void handleSensorCommands(JSONVar root){
     }
 
     if(setValue == current.value) {
-      communication.sendStatus(0);
+      communication.sendStatus(NO_ERROR);
     }
   }
   */
 }
 
-/* Send response, clear the input buffer and wait for new incoming message */
-void prepareForNewMessage(){
-  // Finish by sending all the values
-  communication.sendAll();
-  // clear the string ready for the next input
-  communication.setInputString("");
-  communication.setStringComplete(false);
+/* If no valid message has been received within a sensible amount of time, switch all devices off for safety */
+void disableOutputsIfNoMessageReceived(int timeInMs){
+  if(timeSinceLastMessageExceeds(timeInMs) && !safetyActive){ // 1 second limit
+    mapper.stopOutputs();
+    safetyActive = true; //activate safety
+    communication.sendStatus(NO_MESSAGES_RECEIVED_OUTPUTS_HALTED);
+    communication.sendAll();
+  }
+}
+
+/* Check if it's been a certain amount of time since the last valid message was received */
+bool timeSinceLastMessageExceeds(int timeInMs){
+  return millis() - lastMessage > timeInMs;
+}
+
+/* Update time last valid message received */
+void updateMostRecentMessageTime(){
+  lastMessage = millis();
 }

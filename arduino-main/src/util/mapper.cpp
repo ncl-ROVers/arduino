@@ -33,7 +33,7 @@ void Mapper::instantiateMap(){
         mapB();
     }
     else{
-        communication.sendStatus(-12);
+        communication.sendStatus(ARDUINO_ID_NOT_SET_UP);
     }
 }
 
@@ -45,7 +45,7 @@ Output* Mapper::getOutputFromString(String jsonID){
             }
         }
         // Send error message saying the device was not found
-        communication.sendStatus(-8);
+        communication.sendStatus(INVALID_OUTPUT_DEVICE_KEY);
         return new Output();
     }
     else if(thisIsArduino(A_B)){
@@ -55,12 +55,12 @@ Output* Mapper::getOutputFromString(String jsonID){
             }
         }
         // Send error message saying the device was not found
-        communication.sendStatus(-8);
+        communication.sendStatus(INVALID_OUTPUT_DEVICE_KEY);
         return new Output();
     }
     else {
         // Send error message saying the Arduino was not found
-        communication.sendStatus(-6);
+        communication.sendStatus(THIS_ARDUINO_IS_NOT_OUTPUT);
         return new Output();
     }
 }
@@ -74,7 +74,7 @@ Output* Mapper::getOutputFromIndex(int index){
     }
     else{
         // Send error message saying the Arduino was not found
-        communication.sendStatus(-6);
+        communication.sendStatus(THIS_ARDUINO_IS_NOT_OUTPUT);
         return new Output();
     }
 }
@@ -88,7 +88,7 @@ String Mapper::getOutputString(int index){
     }
     else{
         // Send error message saying the Arduino was not found
-        communication.sendStatus(-6);
+        communication.sendStatus(THIS_ARDUINO_IS_NOT_OUTPUT);
         return "";
     }
 }
@@ -100,12 +100,12 @@ Input* Mapper::getInputFromString(String jsonID){
     //             return bObjects[i];
     //         }
     //         // Send error message saying the device was not found
-    //         communication.sendStatus(-9);
+    //         communication.sendStatus(INVALID_INPUT_DEVICE_KEY);
     //     }
     // }
     // else{
         // Send error message saying the Arduino was not foun
-        communication.sendStatus(-7);
+        communication.sendStatus(THIS_ARDUINO_IS_NOT_INPUT);
         return new Input();
     //}
 }
@@ -116,11 +116,11 @@ Input* Mapper::getInputFromIndex(int index){
     // }
     // else{
         // Send error message saying the Arduino was not fou
-        communication.sendStatus(-7);
+        communication.sendStatus(THIS_ARDUINO_IS_NOT_INPUT);
         return new Input();
     // }
     // // Send error message saying the device was not found
-    // communication.sendStatus(-9);
+    // communication.sendStatus(INVALID_INPUT_DEVICE_KEY);
 }
 
 int Mapper::getNumberOfInputs(){
@@ -150,7 +150,7 @@ void Mapper::sendAllSensors(){
     //     }
     // }
     if(retcode == 0) {
-        communication.sendStatus(0);
+        communication.sendStatus(NO_ERROR);
     }
     communication.sendAll();
 }
@@ -170,9 +170,9 @@ void Mapper::stopOutputs(){
     }
     else{
         // Send error message saying the Arduino was not found
-        communication.sendStatus(-10);
+        communication.sendStatus(CANT_STOP_OUTPUTS_ON_INPUT_ARDUINO);
     }
-    communication.sendStatus(1);
+    communication.sendStatus(OUTPUTS_HALTED);
 }
 
 bool Mapper::thisIsArduino(String arduinoIdToCheck){
