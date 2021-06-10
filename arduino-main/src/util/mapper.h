@@ -10,6 +10,7 @@
 #include "../equipment/output/thruster.h"
 #include "../equipment/output/armgripper.h"
 #include "../equipment/output/armrotation.h"
+#include "../equipment/output/cord.h"
 
 
 /* ==========================Mapper========================== */
