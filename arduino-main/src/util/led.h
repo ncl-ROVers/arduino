@@ -21,6 +21,7 @@ class LED{
     void blue();
     void yellow();
     void purple();
+    void cyan();
 };
 
 extern LED led;
