@@ -6,7 +6,7 @@ ID::ID() {
 }
 
 String ID::getId() {
-  if(digitalRead(idPin) == HIGH){
+  if(digitalRead(idPin) == LOW){
       return "A";
   }
   else{

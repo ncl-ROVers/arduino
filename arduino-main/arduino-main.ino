@@ -57,7 +57,7 @@ void setup() {
   // initialize serial:
   Serial.begin(115200);
   communication.sendStatus(ARDUINO_BOOTING);
-  
+  led.purple();
   // Map inputs and outputs based on which Arduino this is
   mapper.instantiateMap();
 
