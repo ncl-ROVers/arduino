@@ -120,6 +120,9 @@ void loop() {
     }
     
   }
+  else{
+    communication.sendStatus(NO_ERROR);
+  }
 
   // Call this method to process incoming serial data.
   // On Arduino Mega this is called by default each loop, but on Arduino Nano 33 you have to call it manually.
