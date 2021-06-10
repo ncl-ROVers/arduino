@@ -81,7 +81,7 @@ void loop() {
       communication.prepareForNewMessage();
       return;
     }
-
+    led.cyan();
     safetyActive = false; // Switch off auto-off because valid message received
 
     // Act on incoming message accordingly
@@ -119,9 +119,6 @@ void loop() {
       led.yellow();
     }
     
-  }
-  else{
-    communication.sendStatus(NO_ERROR);
   }
 
   // Call this method to process incoming serial data.

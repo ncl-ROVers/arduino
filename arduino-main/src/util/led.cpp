@@ -35,3 +35,9 @@ void LED::purple(){
     digitalWrite(GREEN, HIGH);
     digitalWrite(BLUE, LOW);
 }
+
+void LED::cyan(){
+    digitalWrite(RED, HIGH);
+    digitalWrite(GREEN, LOW);
+    digitalWrite(BLUE, LOW);
+}
