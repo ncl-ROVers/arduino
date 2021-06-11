@@ -2,7 +2,7 @@
 
 void Mapper::mapA(){
 
-    int numberOfThrusters = 8;
+    int numberOfThrusters = 4;
     for ( int i = 0; i < numberOfThrusters; i++) {
         aObjects[i] = new Thruster(i + 2, aIDs[i]); // The 8 movement Thrusters
     }
@@ -11,16 +11,23 @@ void Mapper::mapA(){
 
 void Mapper::mapB(){
 
-    bObjects[0] = new ArmGripper(2, bIDs[0], 18, 19); // Gripper motor for the arm
+    int numberOfThrusters = 4;
+    for ( int i = 0; i < numberOfThrusters; i++) {
+        bObjects[i] = new Thruster(i + 2, bIDs[i]); // The 8 movement Thrusters
+    }
 
     // Delays between each device so they initialise separately. This helps to give an auditory signal that everything is connected properly.
     delay(2000);
+
+    bObjects[4] = new ArmGripper(6, bIDs[4], 18, 19); // Gripper motor for the arm
+
+    delay(2000);
     
-    bObjects[1] = new Cord(3, bIDs[1]); // Micro ROV return cord
+    bObjects[5] = new Cord(7, bIDs[5]); // Micro ROV return cord
 
     delay(2000);
 
-    bObjects[2] = new Thruster(4, bIDs[2]);
+    bObjects[6] = new Thruster(8, bIDs[6]);
 
 }
 
