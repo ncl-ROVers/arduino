@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h> // JSON encoding and decoding
-#include <MsgPack.h>
 #include "../util/constants.h"
 #include "../util/id.h"
 

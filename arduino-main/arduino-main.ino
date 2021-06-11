@@ -14,7 +14,6 @@
 /* ======================Import libraries====================== */
 /* ============================================================ */
 #include <ArduinoJson.h> // JSON encoding and decoding
-#include <MsgPack.h> // Msgpack packing and unpacking
 
 // Custom ROV Libaries
 #include "./src/util/status.h"
