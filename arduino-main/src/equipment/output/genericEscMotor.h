@@ -2,9 +2,10 @@
 #define ESC_MOTOR
 
 #include <Arduino.h>
+#include <mbed.h>
+#include <pinDefinitions.h>
 #include "output.h"
 #include "../../communication/communication.h"
-#include <Servo.h>
 
 /*
   The EscMotor class represents any motor controlled using PWM.
@@ -14,7 +15,7 @@ class EscMotor: public Output {
 
   protected:
     // Represents a motor controlled by an ESC
-    Servo motor;
+    mbed::PwmOut* pwm;
 
   public:
 
