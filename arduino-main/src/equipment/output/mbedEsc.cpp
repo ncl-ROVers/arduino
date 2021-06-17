@@ -1,6 +1,6 @@
-#include "genericEscMotor.h"
+#include "mbedEsc.h"
 
-EscMotor::EscMotor (int inputPin, String partID) {
+MbedEscMotor::MbedEscMotor (int inputPin, String partID) {
   this->partID = partID;
   // Set limit and starting values
   maxValue = 1900;
@@ -9,22 +9,24 @@ EscMotor::EscMotor (int inputPin, String partID) {
   currentValue = stoppedValue;
 
   pin = inputPin; // Record the associated pin
+
+  pwm = new mbed::PwmOut(digitalPinToPinName(pin));
   
-  motor.attach(inputPin);
+  pwm->period_ms(200);
   
   setValue(stoppedValue);
 }
 
-int EscMotor::setValue(int inputValue) {
+int MbedEscMotor::setValue(int inputValue) {
   // call parent logic (keeps value within preset boundary)
   int value = Output::setValue(inputValue);
   // Actually control the device
-  motor.writeMicroseconds(inputValue);
+  pwm->pulsewidth_us(value);
   // Return the set value
   return value;
 }
 
-void EscMotor::turnOff(){
+void MbedEscMotor::turnOff(){
   // Switch off in case of emergency
   setValue(stoppedValue);
 }
