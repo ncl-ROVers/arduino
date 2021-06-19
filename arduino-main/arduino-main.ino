@@ -38,17 +38,17 @@ Mapper mapper; // Lightweight replacement for a map/dictionary structure to map 
 
 Communication communication; // Object to allow for communication with the Raspberry Pi over UART
 
-LED led; // Object to allow for communication with the Raspberry Pi over UART
+//LED led; // Object to allow for communication with the Raspberry Pi over UART
 
 /* ============================================================ */
 /* =======================Setup function======================= */
 /* =============Runs once when Arduino is turned on============ */
 void setup() {
-  led.red();
+  //led.red();
   
   // Wait for serial connection before starting
   while (!Serial);
-  led.yellow();
+  //led.yellow();
   
   ID idGenerator = ID();
   arduinoID = "A_" + idGenerator.getId();
@@ -56,13 +56,13 @@ void setup() {
   // initialize serial:
   Serial.begin(115200);
   communication.sendStatus(ARDUINO_BOOTING);
-  led.purple();
+  //led.purple();
   // Map inputs and outputs based on which Arduino this is
   mapper.instantiateMap();
 
   communication.sendAll();
   communication.sendStatus(NO_ERROR);
-  led.green();
+  //led.green();
 }
 
 /* ============================================================ */
@@ -71,7 +71,7 @@ void setup() {
 void loop() {
   // parse the string when a newline arrives:
   if (communication.stringIsComplete()) {
-    led.purple();
+    //led.purple();
     StaticJsonDocument<200> root;
     DeserializationError err = deserializeMsgPack(root, communication.getInputString());
     // Test if parsing succeeds.
@@ -80,7 +80,7 @@ void loop() {
       communication.prepareForNewMessage();
       return;
     }
-    led.cyan();
+    //led.cyan();
     safetyActive = false; // Switch off auto-off because valid message received
 
     // Act on incoming message accordingly
@@ -96,7 +96,7 @@ void loop() {
     communication.prepareForNewMessage();
 
     updateMostRecentMessageTime();
-    led.green();
+    //led.green();
   }
 
   // Code to run all the time goes here:
@@ -115,7 +115,7 @@ void loop() {
     lastHB = millis();
     communication.sendStatus(HEARTBEAT);
     if(!safetyActive){
-      led.yellow();
+      //led.yellow();
     }
     
   }
@@ -163,7 +163,7 @@ void handleSensorCommands(StaticJsonDocument<200> root){
 /* If no valid message has been received within a sensible amount of time, switch all devices off for safety */
 void disableOutputsIfNoMessageReceived(int timeInMs){
   if(timeSinceLastMessageExceeds(timeInMs) && !safetyActive){ // 1 second limit
-    led.red();
+    //led.red();
     mapper.stopOutputs();
     safetyActive = true; //activate safety
     communication.sendStatus(NO_MESSAGES_RECEIVED_OUTPUTS_HALTED);

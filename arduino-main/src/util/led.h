@@ -24,6 +24,6 @@ class LED{
     void cyan();
 };
 
-extern LED led;
+//extern LED led;
 
 #endif
