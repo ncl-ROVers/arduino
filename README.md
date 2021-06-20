@@ -105,11 +105,11 @@ These will be returned with the S_A or S_B keys.
 
 The Arduino Nano has an RGB LED which is used for debugging.
 
-| Colour | Meaning                                                |
-|--------|--------------------------------------------------------|
+| Colour   | Meaning                                                |
+|----------|--------------------------------------------------------|
 | 🔴Red    | Waiting for data from Pi. Outputs disabled for safety. |
 | 🟢Green  | Everything working as expected                         |
 | 🔵Blue   | Unused                                                 |
 | 🟡Yellow | Waiting for data from Pi                               |
 | 🟣Purple | Loading/processing data                                |
-| Cyan   | Data parsing successful                                |
+| Cyan     | Data parsing successful                                |
