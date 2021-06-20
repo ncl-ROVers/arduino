@@ -124,7 +124,7 @@ The arduino runs arduino-main.ino which imports from the src directory. In terms
 - Output devices (i.e. thrusters, motors) inherit functionality from the Output class. 
     - Anything which was using the BlueRobotics PWM controlled motors, including all thrusters and arm motors, has been derived from the EscMotor class.
 
-This code is ultimately the third iteration of the [2019 Arduino code](https://github.com/ncl-ROVers/ROV-2018-19/tree/master/arduino-master).
+This code is ultimately the third iteration of the [2018-19 Arduino code](https://github.com/ncl-ROVers/ROV-2018-19/tree/master/arduino-master).
 
 ### Mapper
 
