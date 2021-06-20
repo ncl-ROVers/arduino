@@ -4,6 +4,8 @@
 
 Low-level software for the Newcastle University ROV 2021. Takes key:value pairs from [Raspberry Pi](https://github.com/ncl-ROVers/raspberry-pi) in MsgPack format and acts on them accordingly.
 
+Designed for Arduino Nano 33 BLE but should also be fully functional for Arduino Mega 2560 or similar.
+
 ## Installation
 
 ### Software Dependencies
@@ -98,3 +100,16 @@ These will be returned with the S_A or S_B keys.
 | -12           | Arduino ID is not set up                       |
 | -13           | No messages received, outputs halted           |
 | -23           | Index not valid for setting a sensor parameter |
+
+## Status LED
+
+The Arduino Nano has an RGB LED which is used for debugging.
+
+| Colour | Meaning                                                |
+|--------|--------------------------------------------------------|
+| 🔴Red    | Waiting for data from Pi. Outputs disabled for safety. |
+| 🟢Green  | Everything working as expected                         |
+| 🔵Blue   | Unused                                                 |
+| 🟡Yellow | Waiting for data from Pi                               |
+| 🟣Purple | Loading/processing data                                |
+| Cyan   | Data parsing successful                                |
