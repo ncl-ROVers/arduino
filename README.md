@@ -68,7 +68,7 @@ Thrusters are given an ID which describes their position on the ROV. Motors are 
 | T_HAP | 1100 | 1900 |
 | T_HAS | 1100 | 1900 |
 | M_G   | 1200 | 1800 |
-| M_C   | 1650 | 1350 |
+| M_C   | 1350 | 1650 |
 | T_M   | 1100 | 1900 |
 
 ### Outgoing data to Pi
