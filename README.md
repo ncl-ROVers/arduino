@@ -113,3 +113,68 @@ The Arduino Nano has an RGB LED which is used for debugging.
 | 🟡Yellow | Waiting for data from Pi                               |
 | 🟣Purple | Loading/processing data                                |
 | Cyan     | Data parsing successful                                |
+
+## Development
+
+### Overview 
+
+The arduino runs arduino-main.ino which imports from the src directory. In terms of structure, the most interesting parts are in the equipment directory. Each device which could be connected has its own class.
+
+- Input devices (i.e. sensors) inherit functionality from the Input class.
+- Output devices (i.e. thrusters, motors) inherit functionality from the Output class. 
+    - Anything which was using the BlueRobotics PWM controlled motors, including all thrusters and arm motors, has been derived from the EscMotor class.
+
+This code is ultimately the third iteration of the [2019 Arduino code](https://github.com/ncl-ROVers/ROV-2018-19/tree/master/arduino-master).
+
+### Mapper
+
+A lot of the code is structured around the Mapper class. This class acts in a broadly similar way to a Java Hashmap. It has key:value pairs where the key is a string (the JSON ID of that device) and the value is an object which inherits from either Input or Output.
+
+### Project structure
+
+- arduino-main.ino
+- src
+    - communication
+        - communication.h
+        - communication.cpp
+    - equipment
+        - input
+            - input.h
+            - input.cpp
+            - None this year but past sensors can be found in the [2019-20 codebase](https://github.com/ncl-ROVers/arduino-2019-20/tree/master/arduino-main/src/equipment/input).
+        - output
+            - armgripper.h
+            - armgripper.cpp
+            - armrotation.h
+            - armrotation.cpp
+            - cord.h
+            - cord.cpp
+            - genericEscMotor.h
+            - genericEscMotor.cpp
+            - output.h
+            - output.cpp
+            - thruster.h
+            - thruster.cpp
+    - util
+        - constants.h
+        - constants.cpp
+        - id.h
+        - id.cpp
+        - led.h
+        - led.cpp
+        - mapper.h
+        - mapper.cpp
+        - status.h
+        - status.cpp
+
+### Control of motors
+
+All motors in this implementation are the Blue Robotics T100/T200/M100 which are controlled via PWM.
+Each of these classes inherits from the EscMotor class, which in turn inherits from Output.
+You set the speed of the motor using the setValue() method. For these motors it will take values in the range 1100-1900, where 1500 is stopped.
+Devices are controlled when an associated key:value pair is received from the Pi.
+
+### Reading of sensors
+
+Sensors all inherit from the Input base class. You can read the sensor value from the getValue() method, and set any attributes of that sensor with setParam().
+Sensors are polled once per loop. 
