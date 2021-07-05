@@ -10,7 +10,7 @@ class ID{
 
   private:
 
-  int idPin = 17;
+  int idPin = 17; // Pin A3
 
   public:
 

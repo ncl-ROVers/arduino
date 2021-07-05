@@ -4,7 +4,7 @@ void Mapper::mapA(){
 
     int numberOfThrusters = 4;
     for ( int i = 0; i < numberOfThrusters; i++) {
-        aObjects[i] = new Thruster(i + 2, aIDs[i]); // The 8 movement Thrusters
+        aObjects[i] = new MbedEscMotor(i + 2, aIDs[i]); // The 8 movement Thrusters
     }
 
 }

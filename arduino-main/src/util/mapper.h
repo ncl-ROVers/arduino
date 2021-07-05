@@ -11,6 +11,7 @@
 #include "../equipment/output/armgripper.h"
 #include "../equipment/output/armrotation.h"
 #include "../equipment/output/cord.h"
+#include "../equipment/output/mbedEsc.h"
 
 
 /* ==========================Mapper========================== */
